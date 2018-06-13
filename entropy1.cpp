@@ -1,6 +1,6 @@
 
 /*
-subtractBackgroundFunction.cpp :
+entropy1.cpp :
 Date:06/07/2018
 Author: Mark Siegel
 Origional background subtract from: ????????
