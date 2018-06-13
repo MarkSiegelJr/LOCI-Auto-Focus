@@ -1,7 +1,9 @@
+
 /*
-EntropyFunction1.cpp 
-Date: 06/12/2018
+entropyFunction1.cpp
+Date:06/12/2018
 Author: Mark Siegel
+Origional entropy from: ????????
 */
 
 #include "stdafx.h"
