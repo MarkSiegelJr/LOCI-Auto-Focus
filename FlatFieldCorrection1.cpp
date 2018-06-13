@@ -71,69 +71,79 @@ Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
 	return rawImage;
 }
 
+
+//Current Inputs: Starting X, Y, and Z. Final X and Y.
+//Images in question being taken within the code, not as imputs.
+
 int main(int argc, char** argv) {
 	int focusTracker = 0;
-	//coordinates might have to be something other than an int
-	int x = 0;
-	int y = 0;
-	int z = 0;
+	//coordinates might have to be something other than an int, and will mos likely come from inputs
+	int X = starting coordinates;
+	int Y = starting coordinates;
+	int Z = starting coordinates;
 	float entropy = 0;
 	float prevEntropy = 0;
 	//the two bellow will most likely come from inputs
 	int xmax = xmax;
 	int ymax = ymax;
 
-	while (y >= ymax) {
+	while (Y >= ymax) {
 
-		Aquire Image at(x, y, z);
+		Aquire Image at(X, Y, Z);
 
-			if (no tissue present) {//*****need way of determining if there is tissue present or if it is just a background image.
-				Skip focusing process;//*****may still have to subtract background. Maybe through that we can figure out if there is any tissue or not.
-			}
+			//implemented outside functions
+		entropy = findEntropy(subtractBackground(image));
 
-			else if (tissue present) {
+		//establishing an entropy cutoff point where below said point, you have skippable background images,
+		//since background has much lower entropy than images with something in them
+		if (entropy < 10) {//*****cutoff point subject to change
+			use subtractBackground(image);
+		}
 
-				while (focusTracker != 2) {
+		else { //there is tissue present in the image
 
-					//implemented outside functions
-					entropy = findEntropy(subtractBackground(image));
+			while (focusTracker != 2) {
 
-					if (entropy < prevEntropy) {//passed by focus
-						focusTracker++;
-					}
+				//implemented outside functions
+				entropy = findEntropy(subtractBackground(image));
 
-					if (focusTracker == 0) {//not yet past focus, try next
-						++z;
-						prevEntropy = entropy;
-						Aquire new image at(x, y, z);
-					}
+				if (entropy < prevEntropy) {//passed by focus
+					focusTracker++;
+				}
 
-					else if (focusTracker == 1) {//passed over the focus once, so reversing directions
-						--z;
-						prevEntropy = entropy;
-						Aquire new image at(x, y, z);
-					}
+				if (focusTracker == 0) {//not yet past focus, try next
+					++Z;
+					prevEntropy = entropy;
+					Aquire new image at(X, Y, Z);
+				}
 
-					else {//focusTracker = 2, meaning the algorithm just passed over the focus again
-						use/save previous image taken at(x, y, z + 1);
-						//*****depending on how images are saved, could potentially just use previously taken image
-						//(but not the image that was JUST taken) rather than aquiring a new one
-					}
+				else if (focusTracker == 1) {//passed over the focus once, so reversing directions
+					--Z;
+					prevEntropy = entropy;
+					Aquire new image at(X, Y, Z);
+				}
 
-					if (x = xmax) {
-						x = 0;
-						++y;
-						z = wherever it started;
-					}
-					//*****could potentially avoid by snaking around the images rather than going through them left to right
-					else {
-						x++;
-						/* z is left wherever it was, since it is likely that the next focus point is nearby
-						(focusTracker incrementing twice prevents the scan from missing the focus entirely,
-						regardless of strting position of initial scan direction) */
-					}
-				}//inner while
-			}//else if
+				else {//focusTracker = 2, meaning the algorithm just passed over the focus again
+					use/save previous image taken at(X, Y, Z + 1);
+					//*****depending on how images are saved, could potentially just use previously taken image
+					//(but not the image that was JUST taken) rather than aquiring a new one
+				}
+
+				if (X = xmax) {
+					X = 0;
+					++Y;
+					Z = wherever it started;//*****could potentially avoid by snaking around the 
+					//images rather than going through them left to right
+				}
+				
+				else {
+					X++;
+					/* z is left wherever it was, since it is likely that the next focus point is nearby
+					(focusTracker incrementing twice prevents the scan from missing the focus entirely,
+					regardless of strting position of initial scan direction) */
+				}
+			}//inner while
+		}//else tissue present
 	}//outer while
 	return 0;
-}//main end
+}//main
