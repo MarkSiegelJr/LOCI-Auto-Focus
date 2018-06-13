@@ -1,5 +1,10 @@
-// Entropy1.cpp : Defines the entry point for the console application.
-//
+
+/*
+subtractBackgroundFunction.cpp :
+Date:06/07/2018
+Author: Mark Siegel
+Origional background subtract from: ????????
+*/
 
 #include "stdafx.h"
 #include <stdio.h>
