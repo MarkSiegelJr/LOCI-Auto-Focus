@@ -72,8 +72,8 @@ Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
 }
 
 
-//Current Inputs: Starting X, Y, and Z. Final X and Y.
-//Images in question being taken within the code, not as imputs.
+	//Current Inputs: Starting X, Y, and Z. Final X and Y.
+	//Images in question being taken within the code, not as imputs.
 
 int main(int argc, char** argv) {
 	int focusTracker = 0;
@@ -127,21 +127,21 @@ int main(int argc, char** argv) {
 					use/save previous image taken at(X, Y, Z + 1);
 					//*****depending on how images are saved, could potentially just use previously taken image
 					//(but not the image that was JUST taken) rather than aquiring a new one
-				}
-
-				if (X = xmax) {
-					X = 0;
-					++Y;
-					Z = wherever it started;//*****could potentially avoid by snaking around the 
-					//images rather than going through them left to right
-				}
 				
-				else {
-					X++;
-					/* z is left wherever it was, since it is likely that the next focus point is nearby
-					(focusTracker incrementing twice prevents the scan from missing the focus entirely,
-					regardless of strting position of initial scan direction) */
-				}
+					if (X = xmax) {
+						X = 0;
+						++Y;
+						Z = wherever it started;//*****could potentially avoid by snaking around the 
+						//images rather than going through them left to right
+					}
+				
+					else {
+						X++;
+						/* z is left wherever it was, since it is likely that the next focus point is nearby
+						(focusTracker incrementing twice prevents the scan from missing the focus entirely,
+						regardless of strting position of initial scan direction) */
+					}
+				}//else focusTracker = 2
 			}//inner while
 		}//else tissue present
 	}//outer while
