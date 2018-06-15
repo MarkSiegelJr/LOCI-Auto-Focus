@@ -1,4 +1,3 @@
-
 /*
 entropyFunction1.cpp
 Date:06/12/2018
@@ -10,9 +9,13 @@ Origional entropy from: ????????
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+//for runtime analysis
+#include <chrono>
 
 using namespace cv;
 using namespace std;
+//for runtime analysis
+using namespace std::chrono;
 
 //takes an image as input and returns the image's average entropy
 float findEntropy(Mat image) {
@@ -41,6 +44,7 @@ float findEntropy(Mat image) {
 	return avg_entropy;
 }
 
+/*
 //Simple test of findEntropy
 int main(int argc, char** argv)
 {
@@ -63,11 +67,48 @@ int main(int argc, char** argv)
 	cout<<"Entropy of Image: "<<findEntropy(image)<<endl;
 	return 0;
 }
+*/
+
+//measuring runtime of function
+int main(int argc, char** argv) {
+	//image reading
+	Mat image;
+	image = imread(argv[1], 1);
+
+	//image and argument checks
+	if (!image.data)
+	{
+		printf("No image data \n");
+		return -1;
+	}
+	if (argc != 2)
+	{
+		printf("usage: DisplayImage.out <Image_Path>\n");
+		return -1;
+	}
+	int average = 0;
+	int n = 100;
+	for (int i = 0; i < n; i++) {
+		//executing function and finding its runtime
+		high_resolution_clock::time_point t1 = high_resolution_clock::now();
+		float entropy = findEntropy(image);
+		high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+		auto duration = duration_cast<microseconds>(t2 - t1).count();
+		average += duration;
+		
+
+		//cout << "Entropy of Image: " << entropy << endl;
+		cout << i << "Runtime (microseconds): " << duration << endl;
+	}
+	cout << endl << "Average Runtime (microseconds): " << average / (float)n << endl;
+
+	return 0;
+}
 
 
-
-/*NOT YET CODED CORRECTLY
 //testing findEntropy in a while loop to find focus in set of images
+/*NOT YET CODED CORRECTLY
 int main(int argc, char** argv)
 {
 	//tracker to notify loop if focus found
