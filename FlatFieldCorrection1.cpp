@@ -77,7 +77,7 @@ Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
 	//Images in question being taken within the code, not as imputs.
 
 //*****most likely, the code described below will just be trnscribed into the Wiscan system,
-//*****not actually putting the literal coed below in as a function
+//*****not actually putting the literal code below in as a function
 int main(int argc, char** argv) {
 	int focusTracker = 0;
 	//coordinates might have to be something other than an int, and will most likely come from inputs
