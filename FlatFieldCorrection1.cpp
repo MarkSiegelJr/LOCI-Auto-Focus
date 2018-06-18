@@ -2,6 +2,7 @@
 First Outline of field flattness correction algorith for LOCI's CAMM
 Date: 06/7/2018
 Author: Mark Siegel
+Entropy and Background Subtraction from: ????????
 */
 
 #include "stdafx.h"
@@ -75,15 +76,16 @@ Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
 	//Current Inputs: Starting X, Y, and Z. Final X and Y.
 	//Images in question being taken within the code, not as imputs.
 
+//*****most likely, the code described below will just be trnscribed into the Wiscan system,
+//*****not actually putting the literal coed below in as a function
 int main(int argc, char** argv) {
 	int focusTracker = 0;
-	//coordinates might have to be something other than an int, and will mos likely come from inputs
+	//coordinates might have to be something other than an int, and will most likely come from inputs
 	int X = starting coordinates;
 	int Y = starting coordinates;
 	int Z = starting coordinates;
 	float entropy = 0;
 	float prevEntropy = 0;
-	//the two bellow will most likely come from inputs
 	int xmax = xmax;
 	int ymax = ymax;
 
@@ -95,8 +97,8 @@ int main(int argc, char** argv) {
 		entropy = findEntropy(subtractBackground(image));
 
 		//establishing an entropy cutoff point where below said point, you have skippable background images,
-		//since background has much lower entropy than images with something in them
-		if (entropy < 10) {//*****cutoff point subject to change
+		//since background has much lower entropy than images with tissue present
+		if (entropy < 10) {//*****cutoff point subject to change, maybe like 7 or lower.
 			use subtractBackground(image);
 		}
 
@@ -131,7 +133,8 @@ int main(int argc, char** argv) {
 					if (X = xmax) {
 						X = 0;
 						++Y;
-						Z = wherever it started;//*****could potentially avoid by snaking around the 
+						Z = wherever it started;
+						//*****could potentially avoid by snaking around the 
 						//images rather than going through them left to right
 					}
 				
