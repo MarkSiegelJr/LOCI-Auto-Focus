@@ -2,7 +2,7 @@
 First Outline of field flattness correction algorith for LOCI's CAMM
 Date: 06/7/2018
 Author: Mark Siegel
-Entropy and Background Subtraction from: ????????
+Original Entropy and Background Subtraction from: ????????
 */
 
 #include "stdafx.h"
@@ -72,11 +72,37 @@ Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
 	return rawImage;
 }
 
+//function to detect tissue
+bool tissueDetector(Mat bgrImage) {
+	//converting bgr image to hsv image
+	Mat hsvImage;
+	cvtColor(bgrImage, hsvImage, COLOR_BGR2HSV);
 
-	//Current Inputs: Starting X, Y, and Z. Final X and Y.
+	//calculaing image size
+	double imageSize = hsvImage.cols*hsvImage.rows;
+
+	//converting the image into a form where tissue appears white
+	//and everything else appears black.
+	Mat tissue;
+	inRange(hsvImage, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+
+	//Calculating percentage of image is white (is tissue)
+	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
+
+	//Background images will yeild 0 percent.
+	if (tissuePercent == 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+
+	//Current Inputs: Starting X, Y, and Z. Final X and Y. Background Image.
 	//Images in question being taken within the code, not as imputs.
 
-//*****most likely, the code described below will just be trnscribed into the Wiscan system,
+//*****most likely, the code described bellow will just be trnscribed into the Wiscan system,
 //*****not actually putting the literal code below in as a function
 int main(int argc, char** argv) {
 	int focusTracker = 0;
@@ -88,26 +114,24 @@ int main(int argc, char** argv) {
 	float prevEntropy = 0;
 	int xmax = xmax;
 	int ymax = ymax;
+	Mat background;//background to be subtracted from everything
 
 	while (Y >= ymax) {
 
-		Aquire Image at(X, Y, Z);
+		Mat image = Aquire Image at(X, Y, Z);
 
-			//implemented outside functions
-		entropy = findEntropy(subtractBackground(image));
+		//implemented outside functions
+		Mat newImage = subtractBackground(image);
+		entropy = findEntropy(newImage);
 
-		//establishing an entropy cutoff point where below said point, you have skippable background images,
-		//since background has much lower entropy than images with tissue present
-		if (entropy < 10) {//*****cutoff point subject to change, maybe like 7 or lower.
-			use subtractBackground(image);
+		//implementing outside funciton to detect whether or not there is tissue present/
+		if (tissueDetector(newImage)==false) {
+			use newImage;
 		}
 
 		else { //there is tissue present in the image
 
 			while (focusTracker != 2) {
-
-				//implemented outside functions
-				entropy = findEntropy(subtractBackground(image));
 
 				if (entropy < prevEntropy) {//passed by focus
 					focusTracker++;
@@ -117,14 +141,21 @@ int main(int argc, char** argv) {
 					++Z;
 					prevEntropy = entropy;
 					Aquire new image at(X, Y, Z);
+
+					//implemented at end of loop so the first entropy won't be taken twice
+					entropy = findEntropy(subtractBackground(background, image));
 				}
 
 				else if (focusTracker == 1) {//passed over the focus once, so reversing directions
 					--Z;
 					prevEntropy = entropy;
 					Aquire new image at(X, Y, Z);
+
+					//implemented at end of loop so the first entropy won't be taken twice
+					entropy = findEntropy(subtractBackground(background, image));
 				}
 
+				//loop's last iteration
 				else {//focusTracker = 2, meaning the algorithm just passed over the focus again
 					use/save previous image taken at(X, Y, Z + 1);
 					//*****depending on how images are saved, could potentially just use previously taken image
@@ -141,6 +172,7 @@ int main(int argc, char** argv) {
 					else {
 						X++;
 						/* z is left wherever it was, since it is likely that the next focus point is nearby
+
 						(focusTracker incrementing twice prevents the scan from missing the focus entirely,
 						regardless of strting position of initial scan direction) */
 					}
