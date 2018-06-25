@@ -16,8 +16,44 @@ using namespace std;
 //for runtime analysis
 using namespace std::chrono;
 
+
+//for testing
+//function that takes a baackground image and subtracts it from another image, returning the result
+Mat subtractBackground(Mat backgroundImage, Mat rawImage) {
+
+	//storing image dimensions
+	int nChannels = rawImage.channels();
+	int nRows = rawImage.rows;
+	int nCols = rawImage.cols;
+
+
+	//find mean value of backgroundImage
+	long meanBackgroundValue = 0;
+	for (int c = 0; c < nChannels; c++) {
+		for (int y = 0; y < nRows; y++) {
+			for (int x = 0; x < nCols; x++) {
+				meanBackgroundValue = meanBackgroundValue + backgroundImage.at<Vec3b>(y, x)[c];
+			}
+		}
+	}
+	meanBackgroundValue /= nRows*nCols*nChannels;
+
+	//subtracting that value from raw image
+	for (int c = 0; c < nChannels; c++) {
+		for (int y = 0; y < nRows; y++) {
+			for (int x = 0; x < nCols; x++) {
+				rawImage.at<Vec3b>(y, x)[c] = (int)((float)rawImage.at<Vec3b>(y, x)[c] / (float)backgroundImage.at<Vec3b>(y, x)[c] * (float)meanBackgroundValue);
+			}
+		}
+	}
+	return rawImage;
+}
+
+
 int main(int argc, char** argv)
 {
+	//for methdods 1 and 2
+	/*
 	//image reading
 	Mat image;
 	image = imread(argv[1], 1);
@@ -27,12 +63,21 @@ int main(int argc, char** argv)
 
 	vector<Mat> splitImage;
 	split(image, splitImage);
+	*/
 
 	//method 1:
+	/*
 	Mat blue, green, red;
-	inRange(splitImage[2], Scalar(180), Scalar(299), blue);
-	inRange(splitImage[1], Scalar(60), Scalar(179), green);
-	inRange(splitImage[0], Scalar(0), Scalar(59), red);
+	inRange(splitImage[0], Scalar(75,150,60), Scalar(130,255,255), blue);
+	inRange(splitImage[1], Scalar(38,150,60), Scalar(75,255,255), green);
+	inRange(splitImage[2], Scalar(160,150,60), Scalar(179,255,255), red);
+
+	imshow("Blue", splitImage[0]);
+	waitKey(0);
+	imshow("Green", splitImage[1]);
+	waitKey(0);
+	imshow("Red", splitImage[2]);
+	waitKey(0);
 
 	cout << "((double)countNonZero(blue)) " << ((double)countNonZero(blue)) << endl;
 	cout << "((double)countNonZero(green)) " << ((double)countNonZero(green)) << endl;
@@ -41,6 +86,11 @@ int main(int argc, char** argv)
 	double bluePercent = 100.0*((double)countNonZero(blue))/imageSize;
 	double greenPercent = 100.0*((double)countNonZero(green))/imageSize;
 	double redPercent = 100.0*((double)countNonZero(red))/imageSize;
+
+	cout << "Image is " << bluePercent << "% blue." << endl;
+	cout << "Image is " << greenPercent << "% green." << endl;
+	cout << "Image is " << redPercent << "% red." << endl;
+	*/
 
 	//method 2:
 	/*
@@ -51,13 +101,74 @@ int main(int argc, char** argv)
 	double bluePercent = 100.0*((double)countNonZero(splitImage[2]))/imageSize;
 	double greenPercent = 100.0*((double)countNonZero(splitImage[1]))/imageSize;
 	double redPercent = 100.0*((double)countNonZero(splitImage[0]))/imageSize;
-	*/
-
 
 	cout << "Image is " << bluePercent << "% blue." << endl;
 	cout << "Image is " << greenPercent << "% green." << endl;
 	cout << "Image is " << redPercent << "% red." << endl;
+	*/
+
+	//method 3: (This one works!)
+	///*
+	Mat3b bgr = imread(argv[2],1);
+
+	imshow("Tissue", bgr);
+	waitKey();
+
+	Mat3b hsv;
+	cvtColor(bgr, hsv, COLOR_BGR2HSV);
+
+	//imshow("Tissue", hsv);
+	//waitKey();
+
+	double imageSize = hsv.cols*hsv.rows;
+	cout << "Image size: " << imageSize << endl;
+
+	Mat1b tissue;
+	inRange(hsv, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+
+	imshow("Tissue", tissue);
+	waitKey();
+
+	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
+	cout << "Image is " << tissuePercent << "% tissue." << endl;
 
     return 0;
 }
+//*/
 
+	//method 3 with background subtract:
+	/*
+	Mat3b image = imread(argv[2],1);
+	Mat3b background = imread(argv[1], 1);
+
+	imshow("Tissue", background);
+	waitKey(0);
+	imshow("Tissue", image);
+	waitKey(0);
+
+	Mat3b bgr = subtractBackground(background, image);
+
+	imshow("Tissue", bgr);
+	waitKey();
+
+	Mat3b hsv;
+	cvtColor(bgr, hsv, COLOR_BGR2HSV);
+
+	//imshow("Tissue", hsv);
+	//waitKey();
+
+	double imageSize = hsv.cols*hsv.rows;
+	cout << "Image size: " << imageSize << endl;
+
+	Mat1b tissue;
+	inRange(hsv, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+
+	imshow("Tissue", tissue);
+	waitKey();
+
+	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
+	cout << "Image is " << tissuePercent << "% tissue." << endl;
+
+	return 0;
+	}
+	*/
