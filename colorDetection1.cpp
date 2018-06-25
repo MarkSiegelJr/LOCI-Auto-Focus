@@ -109,26 +109,35 @@ int main(int argc, char** argv)
 
 	//method 3: (This one works!)
 	///*
-	Mat3b bgr = imread(argv[2],1);
+	//reads the bgr image
+	Mat bgr = imread(argv[2],1);
 
 	imshow("Tissue", bgr);
 	waitKey();
 
-	Mat3b hsv;
+	//converting the bgr image to an hsv for more convinient color based analysis
+	Mat hsv;
 	cvtColor(bgr, hsv, COLOR_BGR2HSV);
 
 	//imshow("Tissue", hsv);
 	//waitKey();
 
+	//calculating image size
 	double imageSize = hsv.cols*hsv.rows;
 	cout << "Image size: " << imageSize << endl;
 
-	Mat1b tissue;
+	//creating an image where tissue appears as white and anything else appears black
+	//(based on the color of each pixel)
+	Mat tissue;
 	inRange(hsv, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+	//Scalar parameters describe: Color hue from 0 to 180,
+	//saturation (color mixed with white) from 0 to 255,
+	//and value (color mized with black) from 0 to 255 respectively.
 
 	imshow("Tissue", tissue);
 	waitKey();
-
+	
+	//calculating the percent of the whole image teh tissue portion is
 	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
 	cout << "Image is " << tissuePercent << "% tissue." << endl;
 
