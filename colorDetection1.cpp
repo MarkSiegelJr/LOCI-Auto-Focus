@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 	//creating an image where tissue appears as white and anything else appears black
 	//(based on the color of each pixel)
 	Mat tissue;
-	inRange(hsv, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+	inRange(hsv, Scalar(130, 40, 50), Scalar(179, 255, 255), tissue);
 	//Scalar parameters describe: Color hue from 0 to 180,
 	//saturation (color mixed with white) from 0 to 255,
 	//and value (color mized with black) from 0 to 255 respectively.
