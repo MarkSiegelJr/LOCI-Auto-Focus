@@ -84,7 +84,7 @@ bool tissueDetector(Mat bgrImage) {
 	//converting the image into a form where tissue appears white
 	//and everything else appears black.
 	Mat tissue;
-	inRange(hsvImage, Scalar(130, 55, 50), Scalar(179, 255, 255), tissue);
+	inRange(hsvImage, Scalar(130, 40, 50), Scalar(179, 255, 255), tissue);
 
 	//Calculating percentage of image is white (is tissue)
 	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
