@@ -30,8 +30,8 @@ bool tissueDetector(Mat bgrImage) {
 	//Calculating percentage of image is white (is tissue)
 	double tissuePercent = 100.0*((double)countNonZero(tissue)) / imageSize;
 
-	//Background images will yeild 0 percent.
-	if (tissuePercent == 0) {
+	//Background images will yeild less than 1 percent.
+	if (tissuePercent < 1) {
 		return false;
 	}
 	else {
