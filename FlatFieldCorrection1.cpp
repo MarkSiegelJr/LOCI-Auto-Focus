@@ -102,7 +102,7 @@ bool tissueDetector(Mat bgrImage) {
 	//Current Inputs: Starting X, Y, and Z. Final X and Y. Background Image.
 	//Images in question being taken within the code, not as imputs.
 
-//*****most likely, the code described bellow will just be trnscribed into the Wiscan system,
+//*****most likely, the code described bellow will just be transcribed into the Wiscan system,
 //*****not actually putting the literal code below in as a function
 int main(int argc, char** argv) {
 	int focusTracker = 0;
@@ -120,9 +120,8 @@ int main(int argc, char** argv) {
 
 		Mat image = Aquire Image at(X, Y, Z);
 
-		//implemented outside functions
+		//implemented outside function
 		Mat newImage = subtractBackground(image);
-		entropy = findEntropy(newImage);
 
 		//implementing outside funciton to detect whether or not there is tissue present/
 		if (tissueDetector(newImage)==false) {
@@ -130,6 +129,9 @@ int main(int argc, char** argv) {
 		}
 
 		else { //there is tissue present in the image
+			   
+			//implemented outside function
+			entropy = findEntropy(newImage);
 
 			while (focusTracker != 2) {
 
